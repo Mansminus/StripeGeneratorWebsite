@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Stripe Renderer</title>
+    <style>
+      #canvas {
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <label for="angle">Angle:</label>
+      <input type="range" id="angle" min="0" max="360" value="0">
+      <span id="angleValue">0</span>
+    </div>
+    <div>
+      <label for="stripeColor">Stripe color:</label>
+      <input type="color" id="stripeColor" value="#000000">
+    </div>
+    <div>
+      <label for="backgroundColor">Background color:</label>
+      <input type="color" id="backgroundColor" value="#FFFFFF">
+    </div>
+    <div>
+      <label for="stripeCount">Stripe count:</label>
+      <input type="number" id="stripeCount" min="1" value="10">
+    </div>
+    <div>
+      <label for="stripeThickness">Stripe thickness:</label>
+      <input type="range" id="stripeThickness" min="1" max="50" value="10">
+      <span id="stripeThicknessValue">10</span>
+    </div>
+    <div>
+      <label for="stripeDistance">Stripe distance:</label>
+      <input type="range" id="stripeDistance" min="1" max="100" value="20">
+      <span id="stripeDistanceValue">20</span>
+    </div>
+    <canvas id="canvas" width="500" height="500"></canvas>
+    <script>
+      const canvas = document.getElementById("canvas");
+      const context = canvas.getContext("2d");
+      const angle = document.getElementById("angle");
+      const angleValue = document.getElementById("angleValue");
+      const stripeColor = document.getElementById("stripeColor");
+      const backgroundColor = document.getElementById("backgroundColor");
+      const stripeCount = document.getElementById("stripeCount");
+      const stripeThickness = document.getElementById("stripeThickness");
+      const stripeThicknessValue = document.getElementById("stripeThicknessValue");
+      const stripeDistance = document.getElementById("stripeDistance");
+      const stripeDistanceValue = document.getElementById("stripeDistanceValue");
+
+      function renderStripes() {
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
+        const background = backgroundColor.value;
+        const stripe = stripeColor.value;
+        const count = parseInt(stripeCount.value);
+        const thickness = parseInt(stripeThickness.value);
+        const distance = parseInt(stripeDistance.value);
+        const angleDegrees = parseInt(angle.value);
+        const angleRadians = (Math.PI / 180) * angleDegrees;
+        context.fillStyle = background;
+        context.fillRect(0, 0, canvasWidth, canvasHeight);
+        context.fillStyle = stripe;
+        context.lineWidth = thickness;
+        context.strokeStyle = stripe;
+        context.translate(canvasWidth / 2, canvasHeight / 2);
+        context.rotate(angleRadians);
+        for (let i = 0; i < count; i++) {
+          context.beginPath();
+          context.moveTo(-canvasWidth, i * distance - ((count - 1) * distance) / 2);
+          context.lineTo(canvasWidth, i * distance - ((count - 1) * distance) / 2);
+          context.stroke();
+        }
+        context.setTransform(1, 0, 0, 1, 0, 0);
+      }
+
+      angle.addEventListener("input", () => {
+    angleValue.textContent = angle.value;
+    renderStripes();
+  });
+  stripeColor.addEventListener("input", renderStripes);
+  backgroundColor.addEventListener("input", renderStripes);
+  stripeCount.addEventListener("input", renderStripes);
+  stripeThickness.addEventListener("input", () => {
+    stripeThicknessValue.textContent = stripeThickness.value;
+    renderStripes();
+  });
+  stripeDistance.addEventListener("input", () => {
+    stripeDistanceValue.textContent = stripeDistance.value;
+    renderStripes();
+  });
+
+  renderStripes();
+</script>
+</body>
+</html>
